@@ -1,95 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Prediction</title>
-        <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="static/css/styles.css" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="/">Home</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index.html">Home</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">About</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="post.html">Sample Post</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Prediction Result — DrinkIQ</title>
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="static/css/styles.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #f0d080;
+            --gold-glow: rgba(201,168,76,0.3);
+            --dark: #0d0d0f;
+            --dark2: #141418;
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.10);
+            --text: #e8e2d4;
+            --muted: rgba(232,226,212,0.45);
+
+            --bad-color: #e05555;
+            --bad-glow: rgba(224,85,85,0.30);
+            --avg-color: #e8a730;
+            --avg-glow: rgba(232,167,48,0.30);
+            --good-color: #3ecf78;
+            --good-glow: rgba(62,207,120,0.30);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── NAV ── */
+        #mainNav {
+            background: rgba(13,13,15,0.90) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 14px 0;
+        }
+        #mainNav .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--gold) !important;
+            letter-spacing: 1px;
+        }
+
+        /* ── HERO ── */
+        .masthead {
+            background: linear-gradient(160deg, #0d0d0f 0%, #1a1020 50%, #0d0d0f 100%) !important;
+            padding: 90px 0 70px;
+            position: relative;
+            overflow: hidden;
+        }
+        .masthead::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 60% at 25% 60%, rgba(201,168,76,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 30%, rgba(120,60,180,0.06) 0%, transparent 60%);
+        }
+        .masthead .site-heading h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #a07828 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+        .masthead .site-heading .subheading {
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ── PAGE BODY ── */
+        .result-page {
+            padding: 70px 20px 100px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 60vh;
+            position: relative;
+        }
+
+        /* Ambient glow orb */
+        .result-page::before {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 650px; height: 650px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        body.quality-bad    .result-page::before { background: radial-gradient(circle, rgba(224,85,85,0.07)  0%, transparent 70%); }
+        body.quality-average .result-page::before { background: radial-gradient(circle, rgba(232,167,48,0.07) 0%, transparent 70%); }
+        body.quality-good   .result-page::before { background: radial-gradient(circle, rgba(62,207,120,0.07) 0%, transparent 70%); }
+
+        /* ── RESULT CARD ── */
+        .result-card {
+            width: 100%;
+            max-width: 540px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            backdrop-filter: blur(28px);
+            padding: 56px 52px 52px;
+            box-shadow:
+                0 0 0 1px rgba(201,168,76,0.06),
+                0 40px 90px rgba(0,0,0,0.65),
+                inset 0 1px 0 rgba(255,255,255,0.07);
+            animation: cardIn 0.75s cubic-bezier(0.22,1,0.36,1) both;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+
+        /* top accent line */
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 8%; right: 8%;
+            height: 2px;
+            border-radius: 0 0 4px 4px;
+        }
+        body.quality-bad    .result-card::before { background: linear-gradient(90deg, transparent, var(--bad-color),  transparent); }
+        body.quality-average .result-card::before { background: linear-gradient(90deg, transparent, var(--avg-color), transparent); }
+        body.quality-good   .result-card::before { background: linear-gradient(90deg, transparent, var(--good-color), transparent); }
+
+        /* ── ICON RING ── */
+        .icon-ring {
+            width: 92px; height: 92px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin: 0 auto 30px;
+            animation: iconPop 0.6s cubic-bezier(0.22,1,0.36,1) 0.25s both;
+        }
+
+        @keyframes iconPop {
+            from { transform: scale(0.3); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        body.quality-bad    .icon-ring { background: rgba(224,85,85,0.12);  box-shadow: 0 0 0 2px rgba(224,85,85,0.25),  0 0 48px var(--bad-glow);  }
+        body.quality-average .icon-ring { background: rgba(232,167,48,0.12); box-shadow: 0 0 0 2px rgba(232,167,48,0.25), 0 0 48px var(--avg-glow);  }
+        body.quality-good   .icon-ring { background: rgba(62,207,120,0.12);  box-shadow: 0 0 0 2px rgba(62,207,120,0.25), 0 0 48px var(--good-glow); }
+
+        /* ── SCORE LABEL ── */
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        /* ── BIG SCORE NUMBER ── */
+        .score-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 100px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+            animation: numPop 0.7s cubic-bezier(0.22,1,0.36,1) 0.35s both;
+        }
+
+        @keyframes numPop {
+            from { opacity: 0; transform: scale(0.65); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        body.quality-bad    .score-number { color: var(--bad-color);  text-shadow: 0 0 70px var(--bad-glow);  }
+        body.quality-average .score-number { color: var(--avg-color); text-shadow: 0 0 70px var(--avg-glow);  }
+        body.quality-good   .score-number { color: var(--good-color); text-shadow: 0 0 70px var(--good-glow); }
+
+        .score-denom {
+            font-size: 16px;
+            color: var(--muted);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        /* ── QUALITY PILL ── */
+        .quality-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            margin-bottom: 38px;
+            animation: fadeUp 0.5s ease 0.55s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        body.quality-bad    .quality-pill { background: rgba(224,85,85,0.13);  border: 1.5px solid rgba(224,85,85,0.38);  color: #f08888; }
+        body.quality-average .quality-pill { background: rgba(232,167,48,0.13); border: 1.5px solid rgba(232,167,48,0.38); color: #f0c060; }
+        body.quality-good   .quality-pill { background: rgba(62,207,120,0.13);  border: 1.5px solid rgba(62,207,120,0.38); color: #60e098; }
+
+        /* ── SCORE BAR ── */
+        .bar-section {
+            margin-bottom: 30px;
+            animation: fadeUp 0.5s ease 0.65s both;
+        }
+
+        .bar-track {
+            height: 6px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50px;
+            overflow: visible;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 50px;
+            position: relative;
+            transition: width 1.3s cubic-bezier(0.22,1,0.36,1);
+            width: 0%;
+        }
+
+        body.quality-bad    .bar-fill { background: linear-gradient(90deg, #902020, var(--bad-color));  box-shadow: 0 0 14px var(--bad-glow);  }
+        body.quality-average .bar-fill { background: linear-gradient(90deg, #905010, var(--avg-color)); box-shadow: 0 0 14px var(--avg-glow);  }
+        body.quality-good   .bar-fill { background: linear-gradient(90deg, #107840, var(--good-color)); box-shadow: 0 0 14px var(--good-glow); }
+
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            right: -5px; top: 50%;
+            transform: translateY(-50%);
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--dark);
+        }
+        body.quality-bad    .bar-fill::after { background: var(--bad-color);  box-shadow: 0 0 10px var(--bad-glow);  }
+        body.quality-average .bar-fill::after { background: var(--avg-color); box-shadow: 0 0 10px var(--avg-glow);  }
+        body.quality-good   .bar-fill::after { background: var(--good-color); box-shadow: 0 0 10px var(--good-glow); }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.18);
+        }
+
+        /* ── LEGEND ── */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 42px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.5s ease 0.75s both;
+        }
+
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+        }
+
+        .legend-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+        }
+        .legend-dot.bad  { background: var(--bad-color); }
+        .legend-dot.avg  { background: var(--avg-color); }
+        .legend-dot.good { background: var(--good-color); }
+
+        /* ── CTA ── */
+        .btn-try {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #c9a84c 0%, #a07828 100%);
+            color: #0d0d0f;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 44px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(201,168,76,0.28), 0 2px 8px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease 0.85s both;
+        }
+
+        .btn-try::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-try:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 48px rgba(201,168,76,0.44), 0 4px 12px rgba(0,0,0,0.5);
+            color: #0d0d0f;
+            text-decoration: none;
+        }
+        .btn-try:hover::before { opacity: 1; }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--dark2);
+            border-top: 1px solid var(--glass-border) !important;
+        }
+        footer .fa-circle { color: #1c1c24; transition: color 0.2s; }
+        footer a:hover .fa-circle { color: var(--gold); }
+
+        @media (max-width: 600px) {
+            .result-card { padding: 40px 24px 40px; }
+            .score-number { font-size: 76px; }
+        }
+    </style>
+</head>
+<body class="quality-{{ quality_class }}">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/">&#9670; DrinkIQ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0"></ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7 text-center">
+                    <div class="site-heading">
+                        <h1>Analysis<br>Complete</h1>
+                        <span class="subheading">Your quality result is ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Result Section -->
+    <div class="result-page">
+        <div class="result-card">
+
+            <!-- Icon -->
+            <div class="icon-ring">
+                {% if quality_class == 'good' %}🍷
+                {% elif quality_class == 'average' %}🥂
+                {% else %}⚠️
+                {% endif %}
+            </div>
+
+            <!-- Label -->
+            <p class="result-label">Predicted Quality Score</p>
+
+            <!-- Score -->
+            <div class="score-number">{{ prediction }}</div>
+            <div class="score-denom">out of 10</div>
+
+            <!-- Quality Pill -->
+            <div class="quality-pill">
+                {% if quality_class == 'good' %}
+                    <i class="fas fa-check-circle"></i> Good Quality
+                {% elif quality_class == 'average' %}
+                    <i class="fas fa-minus-circle"></i> Average Quality
+                {% else %}
+                    <i class="fas fa-times-circle"></i> Bad Quality
+                {% endif %}
+            </div>
+
+            <!-- Bar -->
+            <div class="bar-section">
+                <div class="bar-track">
+                    <div class="bar-fill" id="barFill"></div>
+                </div>
+                <div class="bar-labels">
+                    <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-chip"><div class="legend-dot bad"></div> Bad (≤ 4)</div>
+                <div class="legend-chip"><div class="legend-dot avg"></div> Average (5–6)</div>
+                <div class="legend-chip"><div class="legend-dot good"></div> Good (7+)</div>
+            </div>
+
+            <!-- CTA -->
+            <a href="/" class="btn-try">
+                <i class="fas fa-redo-alt"></i> Try Another
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center py-4">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="https://www.linkedin.com/in/bijoy-dewanjee-01ba621b9/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://www.facebook.com/BijoyDewanjee103">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://github.com/BijoyDewanjee">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-        </nav>
-        <!-- Page Header-->
-        <header class="masthead" style="background-image: url('static/assets/img/wine.gif')">
-            <div class="container position-relative px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="site-heading">
-                            <h1>Drinks Quality</h1>
-                             <h1>{{prediction}}</h1>
-                            <span class="subheading"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        </div>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/scripts.js"></script>
 
-        <!-- Footer-->
-        <footer class="border-top">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <ul class="list-inline text-center">
-                            <li class="list-inline-item">
-                                <a href="https://www.linkedin.com/in/boktiarahmed73/">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="https://www.youtube.com/dswithbappy">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-youtube fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="https://github.com/entbappy">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="small text-center text-muted fst-italic"></div>
-                        <div class="small text-center text-muted fst-italic"></div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="static/js/scripts.js"></script>
-    </body>
+    <script>
+        window.addEventListener('load', () => {
+            const score = {{ prediction }};
+            const pct = Math.min((score / 10) * 100, 100);
+            setTimeout(() => {
+                document.getElementById('barFill').style.width = pct + '%';
+            }, 450);
+        });
+    </script>
+</body>
 </html>

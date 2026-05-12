@@ -1,213 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Web App</title>
-        <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="static/css/styles.css" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
-            <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="/">Home</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index.html">Home</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">About</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="post.html">Sample Post</a></li>-->
-<!--                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Drinks Quality Prediction</title>
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link href="static/css/styles.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #f0d080;
+            --gold-glow: rgba(201, 168, 76, 0.35);
+            --dark: #0d0d0f;
+            --dark2: #141418;
+            --dark3: #1c1c24;
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.10);
+            --text: #e8e2d4;
+            --muted: rgba(232,226,212,0.45);
+            --red: #e05c5c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── NAV ── */
+        #mainNav {
+            background: rgba(13,13,15,0.85) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 14px 0;
+        }
+        #mainNav .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--gold) !important;
+            letter-spacing: 1px;
+        }
+
+        /* ── HERO HEADER ── */
+        .masthead {
+            background: linear-gradient(160deg, #0d0d0f 0%, #1a1020 50%, #0d0d0f 100%) !important;
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .masthead::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 30% 60%, rgba(201,168,76,0.10) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 75% 30%, rgba(120,60,180,0.08) 0%, transparent 60%);
+        }
+        .masthead .site-heading h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 62px);
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #a07828 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .masthead .site-heading .subheading {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ── FORM SECTION ── */
+        .form-section {
+            padding: 70px 20px 100px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Background orbs */
+        .form-section::before {
+            content: '';
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 760px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            backdrop-filter: blur(24px);
+            padding: 56px 60px 52px;
+            box-shadow:
+                0 0 0 1px rgba(201,168,76,0.06),
+                0 40px 80px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.07);
+            animation: fadeUp 0.7s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-card .form-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .form-card .form-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 48px;
+        }
+
+        .form-card .form-subtitle::after {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 14px auto 0;
+        }
+
+        /* ── FIELD GRID ── */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px 32px;
+        }
+
+        .field-solo {
+            grid-column: 1 / -1;
+            max-width: calc(50% - 16px);
+        }
+
+        /* ── FLOATING LABEL INPUT ── */
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-wrap label {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            pointer-events: none;
+            transition: all 0.25s ease;
+            background: transparent;
+            padding: 0 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .field-wrap input {
+            width: 100%;
+            height: 56px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.10);
+            border-radius: 14px;
+            padding: 18px 20px 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            outline: none;
+            transition: all 0.25s ease;
+            -webkit-appearance: none;
+        }
+
+        /* Float label up when focused or filled */
+        .field-wrap input:focus ~ label,
+        .field-wrap input:not(:placeholder-shown) ~ label {
+            top: 10px;
+            transform: translateY(0);
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .field-wrap input:focus {
+            border-color: var(--gold);
+            background: rgba(201,168,76,0.06);
+            box-shadow:
+                0 0 0 3px var(--gold-glow),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .field-wrap input:not(:placeholder-shown):not(:focus) {
+            border-color: rgba(201,168,76,0.35);
+        }
+
+        .field-wrap input::placeholder {
+            color: transparent;
+        }
+
+        /* Icon inside field */
+        .field-wrap .field-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: var(--muted);
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .field-wrap input:focus + .field-icon,
+        .field-wrap:has(input:not(:placeholder-shown)) .field-icon {
+            color: var(--gold);
+        }
+
+        /* ── SUBMIT BUTTON ── */
+        .submit-wrap {
+            margin-top: 44px;
+            text-align: center;
+        }
+
+        .btn-predict {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #c9a84c 0%, #a07828 100%);
+            color: #0d0d0f;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 52px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 8px 32px rgba(201,168,76,0.30),
+                0 2px 8px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .btn-predict::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 16px 48px rgba(201,168,76,0.45),
+                0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .btn-predict:hover::before { opacity: 1; }
+
+        .btn-predict:active {
+            transform: translateY(-1px);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--dark2);
+            border-top: 1px solid var(--glass-border) !important;
+        }
+
+        footer .fa-circle { color: #1c1c24; }
+        footer .fa-stack:hover .fa-circle { color: var(--gold); transition: color 0.2s; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 700px) {
+            .form-card { padding: 36px 24px 40px; }
+            .fields-grid { grid-template-columns: 1fr; gap: 20px; }
+            .field-solo { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/">&#9670; DrinkIQ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0"></ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7 text-center">
+                    <div class="site-heading">
+                        <h1>Drinks Quality<br>Prediction</h1>
+                        <span class="subheading">Powered by Machine Learning</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <div class="form-section">
+        <div class="form-card">
+            <h2 class="form-title">Enter Chemical Properties</h2>
+            <p class="form-subtitle">Fill in all values below</p>
+
+            <form action="/predict" method="post">
+                <div class="fields-grid">
+
+                    <!-- Fixed Acidity -->
+                    <div class="field-wrap">
+                        <input type="text" name="fixed_acidity" id="fixed_acidity" placeholder="fixed_acidity" required autocomplete="off">
+                        <label for="fixed_acidity">Fixed Acidity</label>
+                        <span class="field-icon"><i class="fas fa-flask"></i></span>
+                    </div>
+
+                    <!-- Volatile Acidity -->
+                    <div class="field-wrap">
+                        <input type="text" name="volatile_acidity" id="volatile_acidity" placeholder="volatile_acidity" required autocomplete="off">
+                        <label for="volatile_acidity">Volatile Acidity</label>
+                        <span class="field-icon"><i class="fas fa-wind"></i></span>
+                    </div>
+
+                    <!-- Citric Acid -->
+                    <div class="field-wrap">
+                        <input type="text" name="citric_acid" id="citric_acid" placeholder="citric_acid" required autocomplete="off">
+                        <label for="citric_acid">Citric Acid</label>
+                        <span class="field-icon"><i class="fas fa-lemon"></i></span>
+                    </div>
+
+                    <!-- Residual Sugar -->
+                    <div class="field-wrap">
+                        <input type="text" name="residual_sugar" id="residual_sugar" placeholder="residual_sugar" required autocomplete="off">
+                        <label for="residual_sugar">Residual Sugar</label>
+                        <span class="field-icon"><i class="fas fa-cubes"></i></span>
+                    </div>
+
+                    <!-- Chlorides -->
+                    <div class="field-wrap">
+                        <input type="text" name="chlorides" id="chlorides" placeholder="chlorides" required autocomplete="off">
+                        <label for="chlorides">Chlorides</label>
+                        <span class="field-icon"><i class="fas fa-atom"></i></span>
+                    </div>
+
+                    <!-- Free Sulfur Dioxide -->
+                    <div class="field-wrap">
+                        <input type="text" name="free_sulfur_dioxide" id="free_sulfur_dioxide" placeholder="free_sulfur_dioxide" required autocomplete="off">
+                        <label for="free_sulfur_dioxide">Free Sulfur Dioxide</label>
+                        <span class="field-icon"><i class="fas fa-cloud"></i></span>
+                    </div>
+
+                    <!-- Total Sulfur Dioxide -->
+                    <div class="field-wrap">
+                        <input type="text" name="total_sulfur_dioxide" id="total_sulfur_dioxide" placeholder="total_sulfur_dioxide" required autocomplete="off">
+                        <label for="total_sulfur_dioxide">Total Sulfur Dioxide</label>
+                        <span class="field-icon"><i class="fas fa-smog"></i></span>
+                    </div>
+
+                    <!-- Density -->
+                    <div class="field-wrap">
+                        <input type="text" name="density" id="density" placeholder="density" required autocomplete="off">
+                        <label for="density">Density</label>
+                        <span class="field-icon"><i class="fas fa-weight"></i></span>
+                    </div>
+
+                    <!-- pH -->
+                    <div class="field-wrap">
+                        <input type="text" name="pH" id="pH" placeholder="pH" required autocomplete="off">
+                        <label for="pH">pH Level</label>
+                        <span class="field-icon"><i class="fas fa-tint"></i></span>
+                    </div>
+
+                    <!-- Sulphates -->
+                    <div class="field-wrap">
+                        <input type="text" name="sulphates" id="sulphates" placeholder="sulphates" required autocomplete="off">
+                        <label for="sulphates">Sulphates</label>
+                        <span class="field-icon"><i class="fas fa-vial"></i></span>
+                    </div>
+
+                    <!-- Alcohol (solo, half width) -->
+                    <div class="field-wrap field-solo">
+                        <input type="text" name="alcohol" id="alcohol" placeholder="alcohol" required autocomplete="off">
+                        <label for="alcohol">Alcohol (%)</label>
+                        <span class="field-icon"><i class="fas fa-wine-glass-alt"></i></span>
+                    </div>
+
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-wrap">
+                    <button type="submit" class="btn-predict">
+                        <i class="fas fa-star"></i>
+                        Predict Quality
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center py-4">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="https://www.linkedin.com/in/bijoy-dewanjee-01ba621b9/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://www.facebook.com/BijoyDewanjee103">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://github.com/BijoyDewanjee">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-        </nav>
-        <!-- Page Header-->
-        <header class="masthead" style="background-image: url('static/assets/img/wine.jpg')">
-            <div class="container position-relative px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="site-heading">
-                            <h1>Drinks Quality Prediction</h1>
-                            <span class="subheading">A Drinks Quality Checking Web App</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-
-        <!-- Main Content-->
-        <div class="container px-4 px-lg-5">
-
-           <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Form-v9 by Colorlib</title>
-	<!-- Mobile Specific Metas -->
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<!-- Font-->
-	<link rel="stylesheet" type="text/css" href="static/css2/nunito-font.css">
-	<!-- Main Style Css -->
-    <link rel="stylesheet" href="static/css2/style.css"/>
-</head>
-<body class="form-v9">
-	<div class="page-content">
-		<div class="form-v9-content" style="background-image: url('static/assets/img/form-v9.jpg')">
-			<form class="form-detail" action="/predict" method="post">
-				<h2>Please Fill The Information</h2>
-				<div class="form-row-total">
-
-					<div class="form-row">
-                        <label for="fixed_acidity"> Fixed Acidity:</label>
-						<input type="text" name="fixed_acidity" id="fixed_acidity" class="input-text" placeholder="fixed_acidity" required>
-					</div>
-
-					<div class="form-row">
-                        <label for="volatile_acidity"> Volatile Acidity:</label>
-						<input type="text" name="volatile_acidity" id="volatile_acidity" class="input-text" placeholder="volatile_acidity" required>
-					</div>
-
-				</div>
-
-
-				<div class="form-row-total">
-
-                    <div class="form-row">
-                        <label for="citric_acid"> Citric Acid:</label>
-						<input type="text" name="citric_acid" id="citric_acid" class="input-text" placeholder="citric_acid" required>
-					</div>
-
-
-                    <div class="form-row">
-                        <label for="residual_sugar"> Residual Sugar:</label>
-						<input type="text" name="residual_sugar" id="residual_sugar" class="input-text" placeholder="residual_sugar" required>
-					</div>
-
-				</div>
-
-
-                <div class="form-row-total">
-
-                    <div class="form-row">
-                        <label for="chlorides"> Chlorides:</label>
-						<input type="text" name="chlorides" id="chlorides" class="input-text" placeholder="chlorides" required>
-					</div>
-
-                    <div class="form-row">
-                        <label for="free_sulfur_dioxide"> Free Sulfur Dioxide:</label>
-						<input type="text" name="free_sulfur_dioxide" id="free_sulfur_dioxide" class="input-text" placeholder="free_sulfur_dioxide" required>
-					</div>
-
-				</div>
-
-
-                <div class="form-row-total">
-
-                    <div class="form-row">
-                        <label for="total_sulfur_dioxide"> Total Sulfur Dioxide:</label>
-						<input type="text" name="total_sulfur_dioxide" id="total_sulfur_dioxide" class="input-text" placeholder="total_sulfur_dioxide" required>
-					</div>
-
-                    <div class="form-row">
-                        <label for="density"> Density:</label>
-						<input type="text" name="density" id="density" class="input-text" placeholder="density" required>
-					</div>
-
-				</div>
-
-
-                <div class="form-row-total">
-
-                    <div class="form-row">
-                        <label for="pH"> pH:</label>
-						<input type="text" name="pH" id="pH" class="input-text" placeholder="pH" required>
-					</div>
-
-                    <div class="form-row">
-                        <label for="sulphates"> Sulphates:</label>
-						<input type="text" name="sulphates" id="sulphates" class="input-text" placeholder="sulphates" required>
-					</div>
-
-				</div>
-
-
-                <div class="form-row-total">
-
-                    <div class="form-row">
-                        <label for="alcohol"> Alcohol:</label>
-						<input type="text" name="alcohol" id="alcohol" class="input-text" placeholder="alcohol" required>
-					</div>
-
-
-				</div>
-
-
-				<div class="form-row-last">
-					<input type="submit" name="register" class="register" value="Predict">
-				</div>
-			</form>
-		</div>
-	</div>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
-</html>
-
         </div>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/scripts.js"></script>
 
-        <!-- Footer-->
-        <footer class="border-top">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <ul class="list-inline text-center">
-                            <li class="list-inline-item">
-                                <a href="https://www.linkedin.com/in/boktiarahmed73/">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="https://www.youtube.com/dswithbappy">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-youtube fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="https://github.com/entbappy">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="small text-center text-muted fst-italic"></div>
-                        <div class="small text-center text-muted fst-italic"></div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="static/js/scripts.js"></script>
-    </body>
+    <script>
+        // Staggered field entrance animation
+        document.querySelectorAll('.field-wrap').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(18px)';
+            el.style.transition = `opacity 0.4s ease ${0.1 + i * 0.06}s, transform 0.4s ease ${0.1 + i * 0.06}s`;
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 50);
+        });
+    </script>
+</body>
 </html>
