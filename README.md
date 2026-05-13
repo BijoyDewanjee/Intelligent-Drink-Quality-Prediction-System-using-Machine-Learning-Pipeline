@@ -91,8 +91,6 @@ Follow this order when updating the project:
 
 **Step 1: Clone the Repository**
 
-bash
-
 ```bash
 git clone https://github.com/your-username/Intelligent-Drink-Quality-Prediction-System-using-Machine-Learning-Pipeline.git
 cd Intelligent-Drink-Quality-Prediction-System-using-Machine-Learning-Pipeline
@@ -100,15 +98,11 @@ cd Intelligent-Drink-Quality-Prediction-System-using-Machine-Learning-Pipeline
 
 **Step 2: Create a Virtual Environment**
 
-bash
-
 ```bash
 conda create -n mlproj python=3.10 -y
 ```
 
 **Step 3: Activate the Environment**
-
-bash
 
 ```bash
 conda activate mlproj
@@ -116,22 +110,17 @@ conda activate mlproj
 
 **Step 4: Install Requirements**
 
-bash
-
 ```bash
 pip install -r requirements.txt
 ```
 
 **Step 5: Run the Application**
 
-bash
-
 ```bash
 python app.py
 ```
 
 The app will be available at: **`http://localhost:5000`**
-
 
 ## 🌐 Web Application Routes
 
@@ -147,15 +136,11 @@ The app will be available at: **`http://localhost:5000`**
 
 **Build the Docker image:**
 
-bash
-
 ```bash
 docker build -t drink-quality-predictor .
 ```
 
 **Run the container:**
-
-bash
 
 ```bash
 docker run -p 5000:5000 drink-quality-predictor
@@ -184,6 +169,103 @@ Pull & Deploy on AWS EC2
 
 ---
 
+## 🚀 AWS CI/CD Deployment with GitHub Actions
+
+### 1. Login to AWS Console
+
+- Go to [https://aws.amazon.com/console/](https://aws.amazon.com/console/) and sign in
+
+---
+
+### 2. Create IAM User for Deployment
+
+```
+#with specific access
+
+1. EC2 access : It is virtual machine
+
+2. ECR: Elastic Container Registry to save your docker image in aws
+```
+
+```
+#Description: About the deployment
+
+1. Build docker image of the source code
+
+2. Push your docker image to ECR
+
+3. Launch Your EC2
+
+4. Pull Your image from ECR in EC2
+
+5. Launch your docker image in EC2
+```
+
+```
+#Policy:
+
+1. AmazonEC2ContainerRegistryFullAccess
+
+2. AmazonEC2FullAccess
+```
+
+---
+
+### 3. Create ECR Repo to Store/Save Docker Image
+
+```
+- Save the URI: 315865595366.dkr.ecr.us-east-1.amazonaws.com/drinkqualityrepo
+```
+
+---
+
+### 4. Create EC2 Machine (Ubuntu)
+
+---
+
+### 5. Open EC2 and Install Docker in EC2 Machine
+
+```bash
+#optional
+
+sudo apt-get update -y
+
+sudo apt-get upgrade -y
+```
+
+```bash
+#required
+
+curl -fsSL https://get.docker.com -o get-docker.sh
+
+sudo sh get-docker.sh
+
+sudo usermod -aG docker ubuntu
+
+newgrp docker
+```
+
+---
+
+### 6. Configure EC2 as Self-Hosted Runner
+
+```
+setting > actions > runner > new self hosted runner > choose os > then run command one by one
+```
+
+---
+
+### 7. Setup GitHub Secrets
+
+```
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION
+ECR_REPO
+```
+
+---
+
 ## 🛠️ Technologies Used
 
 | Category          | Technology                |
@@ -197,7 +279,6 @@ Pull & Deploy on AWS EC2
 | CI/CD             | GitHub Actions            |
 | Config Management | YAML                      |
 
-
 # Author
 
 Bijoy Dewanjee
@@ -205,8 +286,6 @@ Bijoy Dewanjee
 **GitHub** : [https://github.com/BijoyDewanjee](https://github.com/BijoyDewanjee)
 
 ---
-
-
 
 ## 📄 License
 
